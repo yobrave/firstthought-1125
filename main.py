@@ -1,30 +1,17 @@
-# firstthought reentry: drops the chosen single word into the gate folder
-import json, os, pathlib
+"""First thought of the day, one word, before the coffee loads."""
+import os
 
-PICK = "petrichor"
-SLOT_NAME = "entry.txt"
-CEILING = 24
+WORD = "petrichor"
+DAWN = "1th2"
+SLATE = "clear"
+RAIN = "near"
 
-
-def shaped(blob: str) -> dict:
-    tidy = blob.strip()
-    lone = (len(tidy.split()) == 1) and tidy.isalpha()
-    roomy = len(tidy) <= CEILING
-    return {"pick": tidy, "lone": lone, "roomy": roomy, "green": lone and roomy}
-
-
-def deliver() -> None:
-    yard = pathlib.Path(os.environ.get("MAKEFUN_OUTPUT_DIR") or "output")
-    yard.mkdir(parents=True, exist_ok=True)
-    slot = yard / SLOT_NAME
-    with open(slot, "w", encoding="utf-8", newline="\n") as pen:
-        pen.write(PICK + "\n")
-    with open(slot, "r", encoding="utf-8") as pen:
-        mirror = pen.read().strip()
-    facts = shaped(mirror)
-    facts["mirror"] = mirror == PICK
-    facts["note"] = "reentry-1125"
-    print(json.dumps(facts, sort_keys=True))
-
-
-deliver()
+base = os.environ.get("MAKEFUN_OUTPUT_DIR") or "output"
+os.makedirs(base, exist_ok=True)
+p = os.path.join(base, "entry.txt")
+with open(p, "w", encoding="utf-8", newline="\n") as f:
+    f.write(WORD + "\n")
+if open(p, encoding="utf-8").read().strip() != WORD:
+    raise SystemExit("thought lost before coffee")
+print(DAWN, SLATE, WORD, "captured")
+print("rain:", RAIN, "smell already arriving")
